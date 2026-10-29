@@ -119,18 +119,26 @@ sudo systemctl status port-inventory.service
 
 ## 7. Method 4: Containerized Deployment (Docker / Podman)
 
-When running in a container, run the application on an unprivileged internal port (e.g., 8000) and publish it to Port 80 on the host:
+Port Inventory includes an official multi-stage `Dockerfile` and `docker-compose.yml`.
+
+Because Port Inventory inspects Linux kernel procfs (`/proc/net/tcp`, `/proc/net/udp`, and `/proc/[pid]/fd`), it must attach to the host's network and PID namespaces to monitor host sockets:
 
 ```bash
+# Run with host network and PID namespaces for full host visibility
 docker run -d \
   --name port-inventory \
   --restart unless-stopped \
-  -p 80:8000 \
-  -e PORT=8000 \
-  -v /proc:/proc:ro \
-  jericbas/port-inventory:latest
+  --network host \
+  --pid host \
+  port-inventory:latest
 ```
-*Note: Mounting `/proc:/proc:ro` allows the container to inspect the host kernel socket table directly.*
+
+Alternatively, use Docker Compose:
+```bash
+docker compose up -d
+```
+
+For complete instructions covering bridge mode isolation, environment variables, healthchecks, and headless terminal usage, see [**docs/DOCKER_AND_HEADLESS.md**](DOCKER_AND_HEADLESS.md).
 
 ---
 

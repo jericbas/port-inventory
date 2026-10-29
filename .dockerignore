@@ -1,0 +1,19 @@
+# Git and CI
+.git
+.github
+.gemini
+
+# Build artifacts
+dist
+target
+node_modules
+
+# Logs and environment
+*.log
+.env
+.env.*
+
+# Temporary files
+*.tmp
+*.swp
+.DS_Store
