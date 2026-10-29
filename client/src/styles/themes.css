@@ -1,0 +1,242 @@
+/* ============================================================================
+ * File: client/src/styles/themes.css
+ * Description: 9 Thematic Color Palettes (3 Light, 3 Dark, 3 Light-Dark Hybrid)
+ *
+ * What is this file?
+ * This stylesheet defines CSS design tokens and variables for 9 distinct visual
+ * themes across three ergonomic categories:
+ *
+ * 1. LIGHT PALETTES:
+ *    - arctic-snow: Ultra-clean clinical white, iced slate, cobalt blue.
+ *    - paper-sand: Warm parchment, editorial sepia, terracotta accents.
+ *    - pastel-mint: Calming sage daylight, botanical greens, soft emerald.
+ *
+ * 2. DARK PALETTES:
+ *    - midnight-obsidian: Pitch black OLED, neon cyan, deep space telemetry.
+ *    - cyber-synthwave: Retro-futuristic cyberpunk violet, neon magenta & teal.
+ *    - charcoal-slate: Matte graphite, industrial titanium, low-glare dark.
+ *
+ * 3. LIGHT-DARK HYBRIDS:
+ *    - solar-eclipse: Pitch-dark navigation deck paired with crisp daylight canvas.
+ *    - nordic-twilight: Balanced Scandinavian blue-gray twilight for eye comfort.
+ *    - oled-mono-duo: Stark high-contrast dual-tone architectural monochrome.
+ * ============================================================================ */
+
+/* -------------------------------------------------------------------------
+ * 1. LIGHT THEMES (3 PALETTES)
+ * ------------------------------------------------------------------------- */
+
+/* Theme 1.1: Arctic Snow */
+[data-theme="arctic-snow"] {
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-badge: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-faint: #94a3b8;
+  --border-subtle: #e2e8f0;
+  --border-focus: #3b82f6;
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #1d4ed8;
+  --accent-secondary: #0284c7;
+  --color-listening: #10b981;
+  --color-listening-bg: #ecfdf5;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+}
+
+/* Theme 1.2: Paper Sand */
+[data-theme="paper-sand"] {
+  --bg-app: #fbf7ee;
+  --bg-surface: #f4ede1;
+  --bg-card: #ffffff;
+  --bg-card-hover: #faebd7;
+  --bg-badge: #e6dcce;
+  --text-main: #292524;
+  --text-muted: #57534e;
+  --text-faint: #a8a29e;
+  --border-subtle: #e7e0d3;
+  --border-focus: #c2410c;
+  --accent-primary: #b45309;
+  --accent-primary-hover: #92400e;
+  --accent-secondary: #c2410c;
+  --color-listening: #059669;
+  --color-listening-bg: #e6f7ef;
+  --color-warning: #d97706;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fee2e2;
+}
+
+/* Theme 1.3: Pastel Mint */
+[data-theme="pastel-mint"] {
+  --bg-app: #f0fdf4;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #dcfce7;
+  --bg-badge: #d1fae5;
+  --text-main: #064e3b;
+  --text-muted: #047857;
+  --text-faint: #6ee7b7;
+  --border-subtle: #bbf7d0;
+  --border-focus: #10b981;
+  --accent-primary: #059669;
+  --accent-primary-hover: #047857;
+  --accent-secondary: #0d9488;
+  --color-listening: #10b981;
+  --color-listening-bg: #ecfdf5;
+  --color-warning: #eab308;
+  --color-warning-bg: #fef9c3;
+  --color-danger: #e11d48;
+  --color-danger-bg: #ffe4e6;
+}
+
+/* -------------------------------------------------------------------------
+ * 2. DARK THEMES (3 PALETTES)
+ * ------------------------------------------------------------------------- */
+
+/* Theme 2.1: Midnight Obsidian */
+[data-theme="midnight-obsidian"] {
+  --bg-app: #09090b;
+  --bg-surface: #121217;
+  --bg-card: #18181f;
+  --bg-card-hover: #22222b;
+  --bg-badge: #272733;
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --text-faint: #52525b;
+  --border-subtle: #27273a;
+  --border-focus: #38bdf8;
+  --accent-primary: #38bdf8;
+  --accent-primary-hover: #0ea5e9;
+  --accent-secondary: #818cf8;
+  --color-listening: #34d399;
+  --color-listening-bg: #064e3b44;
+  --color-warning: #fbbf24;
+  --color-warning-bg: #78350f44;
+  --color-danger: #f87171;
+  --color-danger-bg: #7f1d1d44;
+}
+
+/* Theme 2.2: Cyber Synthwave */
+[data-theme="cyber-synthwave"] {
+  --bg-app: #0f0728;
+  --bg-surface: #180d38;
+  --bg-card: #20134a;
+  --bg-card-hover: #2c1a66;
+  --bg-badge: #3b2282;
+  --text-main: #fdf4ff;
+  --text-muted: #d8b4fe;
+  --text-faint: #9333ea;
+  --border-subtle: #4c1d95;
+  --border-focus: #f43f5e;
+  --accent-primary: #ec4899;
+  --accent-primary-hover: #db2777;
+  --accent-secondary: #06b6d4;
+  --color-listening: #10b981;
+  --color-listening-bg: #064e3b55;
+  --color-warning: #fbbf24;
+  --color-warning-bg: #78350f55;
+  --color-danger: #f43f5e;
+  --color-danger-bg: #88133755;
+}
+
+/* Theme 2.3: Charcoal Slate */
+[data-theme="charcoal-slate"] {
+  --bg-app: #18181b;
+  --bg-surface: #202024;
+  --bg-card: #27272a;
+  --bg-card-hover: #323238;
+  --bg-badge: #3f3f46;
+  --text-main: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --text-faint: #71717a;
+  --border-subtle: #3f3f46;
+  --border-focus: #94a3b8;
+  --accent-primary: #94a3b8;
+  --accent-primary-hover: #cbd5e1;
+  --accent-secondary: #64748b;
+  --color-listening: #4ade80;
+  --color-listening-bg: #14532d44;
+  --color-warning: #facc15;
+  --color-warning-bg: #713f1244;
+  --color-danger: #fb7185;
+  --color-danger-bg: #88133744;
+}
+
+/* -------------------------------------------------------------------------
+ * 3. LIGHT-DARK HYBRID THEMES (3 PALETTES)
+ * ------------------------------------------------------------------------- */
+
+/* Theme 3.1: Solar Eclipse (Dark Top Deck / Light High-Legibility Canvas) */
+[data-theme="solar-eclipse"] {
+  --bg-app: #f1f5f9;
+  --bg-surface: #0f172a;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-badge: #334155;
+  --text-main: #0f172a;
+  --text-muted: #334155;
+  --text-faint: #64748b;
+  --border-subtle: #cbd5e1;
+  --border-focus: #0f172a;
+  --accent-primary: #0f172a;
+  --accent-primary-hover: #1e293b;
+  --accent-secondary: #3b82f6;
+  --color-listening: #059669;
+  --color-listening-bg: #ecfdf5;
+  --color-warning: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+}
+
+/* Theme 3.2: Nordic Twilight (Balanced Muted Blue-Gray Intermediate) */
+[data-theme="nordic-twilight"] {
+  --bg-app: #242933;
+  --bg-surface: #2e3440;
+  --bg-card: #3b4252;
+  --bg-card-hover: #434c5e;
+  --bg-badge: #4c566a;
+  --text-main: #eceff4;
+  --text-muted: #d8dee9;
+  --text-faint: #88c0d0;
+  --border-subtle: #4c566a;
+  --border-focus: #88c0d0;
+  --accent-primary: #88c0d0;
+  --accent-primary-hover: #81a1c1;
+  --accent-secondary: #5e81ac;
+  --color-listening: #a3be8c;
+  --color-listening-bg: #2e3b2e;
+  --color-warning: #ebcb8b;
+  --color-warning-bg: #3f3b25;
+  --color-danger: #bf616a;
+  --color-danger-bg: #3f2527;
+}
+
+/* Theme 3.3: OLED Mono Duo (Stark High-Contrast Split Monochrome) */
+[data-theme="oled-mono-duo"] {
+  --bg-app: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-card: #121212;
+  --bg-card-hover: #1f1f1f;
+  --bg-badge: #262626;
+  --text-main: #ffffff;
+  --text-muted: #cccccc;
+  --text-faint: #888888;
+  --border-subtle: #333333;
+  --border-focus: #ffffff;
+  --accent-primary: #ffffff;
+  --accent-primary-hover: #e5e5e5;
+  --accent-secondary: #aaaaaa;
+  --color-listening: #00ff66;
+  --color-listening-bg: #003314;
+  --color-warning: #ffcc00;
+  --color-warning-bg: #332600;
+  --color-danger: #ff3344;
+  --color-danger-bg: #330006;
+}

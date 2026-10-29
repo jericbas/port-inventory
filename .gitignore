@@ -1,0 +1,19 @@
+# Generated binaries and dependencies
+/target
+/node_modules
+/dist
+
+# Environment and local config
+.env
+.env.local
+*.local
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

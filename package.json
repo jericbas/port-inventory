@@ -1,0 +1,30 @@
+{
+  "name": "port-inventory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "High-performance port catalog and live system socket monitor built with Rust, Bun, Vite, React, TypeScript, and Biome",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "check": "biome check --write .",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "start": "cargo run --release",
+    "deploy": "bun run build && cargo build --release"
+  },
+  "dependencies": {
+    "lucide-react": "^1.63.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}
