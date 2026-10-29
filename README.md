@@ -3,103 +3,27 @@
 > **High-performance host socket inspector, live process inventory, and IANA reserved port catalog.**  
 > Built with **Rust (Axum + Tokio)**, **Bun**, **Vite**, **React 19**, **TypeScript**, and **Biome**. Defaulting to **Port 80**.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Trunk-Based](https://img.shields.io/badge/git-Trunk--Based-brightgreen.svg)](docs/TRUNK_BASED.md)
+[![Release Please](https://img.shields.io/badge/release--please-automated-orange.svg)](docs/TRUNK_BASED.md)
+[![Biome Checked](https://img.shields.io/badge/code_style-Biome-60a5fa.svg)](biome.json)
+
 ---
 
-## ⚠️ CRITICAL NOTICE: FOR PERSONAL & INTERNAL USE ONLY
+## ⚠️ PERSONAL & HOMELAB USE ONLY — NO AUTHENTICATION
 
 > [!CAUTION]
 > **NO AUTHENTICATION IS ENABLED BY DESIGN.**  
-> This utility intentionally does **NOT** contain passwords, user accounts, or authentication tokens. It exposes:
-> - All listening TCP/UDP sockets and active established connections on your host.
-> - Associated Process IDs (PIDs), executable names, and command-line arguments.
-> - System hostname, kernel version, and network topology.
->
-> **IT IS ENTIRELY UP TO YOU HOW YOU DEPLOY AND ACCESS THIS UTILITY.**  
+> This diagnostic utility has zero credentials or role checks. It exposes all host listening sockets, established connections, Process IDs (PIDs), and command-line arguments.
 > - **DO NOT expose Port 80 directly to the public internet** or forward WAN ports on consumer routers.
-> - **Best usage is strictly for personal homelab diagnostics**, local developer troubleshooting (`127.0.0.1`), or within an encrypted mesh overlay (e.g. **Tailscale**, **WireGuard**, or **Netbird**).
-> - If you must access this dashboard remotely across multiple devices, place it behind an authenticating reverse proxy (e.g. **Cloudflare Zero Trust Access**, **Authelia**, **Caddy with basic_auth**, or **Nginx**).
-
----
-
-## 🚀 Key Features
-
-- **Port 80 Native & Capability-Aware**: Automatically targets privileged Port 80 (`http://localhost`). Features intelligent fallback and capability instructions if non-root permissions prevent binding.
-- **Real-Time Linux Kernel Socket Inspection**: Reads directly from `/proc/net/tcp`, `/proc/net/udp`, and `/proc/[pid]/fd` symlinks. Zero synthetic network packets are transmitted; 100% passive, sub-millisecond kernel socket discovery.
-- **Comprehensive IANA & System Reserved Port Directory**: Catalogs well-known privileged ports (0–1023) and high-profile registered ports (Docker, Kubernetes, Redis, PostgreSQL, MySQL, etcd, etc.), marking which are active, reserved, or available.
-- **Deep Single-Port Inspector**: Click any port to inspect process owners, binding verdicts, known CVE attack surfaces, and suggested clean alternative ports.
-- **9 Ergonomic Themes (3 Light, 3 Dark, 3 Light-Dark Hybrid)**: Instant switching with zero page refresh and localStorage persistence.
-- **Deployment Principles & Philosophy**: In-depth architecture documentation embedded both in code and as an interactive dashboard tab.
-- **Engineering Craftsmanship**: Strict modular codebase where every file averages ~200 lines, fully checked and formatted with Biome.
-
----
-
-## 🎨 9 Distinct Thematic Palettes
-
-Switch effortlessly using the **Theme Selector** in the dashboard header:
-
-| Category | Theme Name | Description | Key Accents |
-| :--- | :--- | :--- | :--- |
-| **Light** | **Arctic Snow** | Ultra-clean clinical daylight with crisp slate | `#2563eb` Cobalt / `#f8fafc` Canvas |
-| **Light** | **Paper Sand** | Warm sepia parchment and editorial aesthetic | `#b45309` Terracotta / `#fbf7ee` Sand |
-| **Light** | **Pastel Mint** | Fresh sage daylight and botanical emerald | `#059669` Mint / `#f0fdf4` Sage |
-| **Dark** | **Midnight Obsidian** | Deep OLED pitch-black with neon cyan telemetry | `#38bdf8` Electric Cyan / `#09090b` Void |
-| **Dark** | **Cyber Synthwave** | Retro-futuristic dark violet with hot magenta | `#ec4899` Neon Pink / `#0f0728` Purple |
-| **Dark** | **Charcoal Slate** | Matte studio graphite and industrial steel | `#94a3b8` Steel / `#18181b` Charcoal |
-| **Hybrid** | **Solar Eclipse** | Dark command header deck with daylight canvas | `#0f172a` Obsidian / `#ffffff` Crisp Card |
-| **Hybrid** | **Nordic Twilight** | Balanced blue-gray twilight reducing eye strain | `#88c0d0` Frost Blue / `#242933` Twilight |
-| **Hybrid** | **OLED Mono Duo** | Stark architectural duo-tone high-contrast split | `#ffffff` White / `#000000` True Black |
-
----
-
-## 🛠️ Tech Stack & Philosophy
-
-| Layer | Technology | Role |
-| :--- | :--- | :--- |
-| **Backend** | **Rust** (`axum`, `tokio`, `tower-http`) | High-speed passive socket scanner & static file server |
-| **Runtime & Bundler** | **Bun** + **Vite** | Blazing-fast TypeScript transpilation and asset compilation |
-| **Frontend** | **React 19** + **TypeScript** | Responsive UI with real-time socket inspection modals |
-| **Icons** | **Lucide React** | Clean, accessible SVG iconography |
-| **Code Quality** | **Biome** (`@biomejs/biome`) | Lightning-fast linting, formatting, and import sorting |
-
----
-
-## 📋 Deployment Principles, Practices & Philosophy
-
-### 1. The Personal-Use Boundary & Zero-Auth Architecture
-The utility is intentionally designed without authentication to ensure friction-free, instantaneous local diagnostics during network emergencies or homelab audits. Because no auth barrier exists, the security boundary must be enforced at the network perimeter (host firewall, private VLAN, or VPN tunnel).
-
-### 2. The Port 80 Privilege Separation Dilemma
-On Linux, ports below 1024 are privileged. Running diagnostic servers as `root` violates the Principle of Least Privilege:
-- **Recommended**: Grant Linux capabilities to the compiled binary without root:
-  ```bash
-  sudo setcap 'cap_net_bind_service=+ep' ./target/release/port-inventory
-  ```
-- **Alternative**: Permit unprivileged low port binding system-wide:
-  ```bash
-  sudo sysctl net.ipv4.ip_unprivileged_port_start=80
-  ```
-- **Automatic Fallback**: If permissions are not granted, Port Inventory automatically falls back to Port `8080` (or `PORT` environment variable) and prints exact instructions.
-
-### 3. Immutable Single-Binary Distribution
-Build-time is strictly decoupled from run-time: Bun compiles React and Vite assets into static files in `./dist/`. Rust then serves these assets directly alongside REST endpoints. In production, no Node.js or Bun runtime is required on the server.
-
-### 4. Non-Intrusive Kernel Observability
-Unlike port scanners that flood the local network with SYN packets (triggering firewalls and IDS alarms), Port Inventory passively parses `/proc/net/tcp`, `/proc/net/udp`, and `/proc/[pid]/fd/*`. This achieves 100% accurate socket and PID mapping with zero network packet overhead.
-
-### 5. Port Allocation Hygiene & Availability Tiers
-- **Well-Known Ports (0–1023)**: Reserved for system daemons and standard protocols.
-- **Registered Ports (1024–49151)**: Allocated for specific developer tools and services (Postgres, Redis, Docker).
-- **Dynamic / Ephemeral Ports (49152–65535)**: Temporarily allocated by the kernel for outbound client sockets.
+> - **Best usage is strictly for personal homelab diagnostics**, local developer testing (`127.0.0.1`), or inside an encrypted mesh overlay (**Tailscale**, **WireGuard**, or **Netbird**).
+> - See [**Security Policy & Isolation Guide**](docs/SECURITY.md) for reverse proxy setup (Authelia, Caddy, Nginx).
 
 ---
 
 ## ⚡ Quick Start
 
-### Prerequisites
-- **Rust Toolchain**: `rustc` and `cargo` (1.75+)
-- **Bun**: `bun` (1.0+)
-
-### 1. Clone & Install Dependencies
+### 1. Clone & Install
 ```bash
 git clone https://github.com/jericbas/port-inventory.git
 cd port-inventory
@@ -111,54 +35,90 @@ bun install
 bun run build
 ```
 
-### 3. Run with Port 80 (Root or Capabilities)
-To bind to Port 80 directly:
+### 3. Run on Port 80 (Recommended Linux Capability Setup)
+Grant port binding capabilities to the compiled binary without needing root:
 ```bash
-# Option A: Grant capability once, then run as normal user
 cargo build --release
 sudo setcap 'cap_net_bind_service=+ep' ./target/release/port-inventory
 ./target/release/port-inventory
-
-# Option B: Run via sudo
-sudo ./target/release/port-inventory
-
-# Option C: Run on alternative port without root
-PORT=8000 ./target/release/port-inventory
 ```
+Open **`http://localhost`** in your browser.
 
-Open your browser at **`http://localhost`** (or **`http://localhost:8080`** if running in unprivileged fallback mode).
+*(If launched without capabilities, it automatically falls back gracefully to unprivileged Port `8080` / `8000`.)*
 
 ---
 
-## 🔧 Developer Commands
+## 🚀 Key Capabilities
+
+- **Port 80 Native & Capability Supervisor**: Default target is Port 80 with automatic fallback if permissions are restricted. See [**Port 80 Binding Guide**](docs/PORT_BINDING.md).
+- **Passive Kernel Procfs Inspection**: Reads directly from `/proc/net/tcp`, `/proc/net/udp`, and `/proc/[pid]/fd` symlinks. Zero synthetic network packets are transmitted. See [**Architecture Guide**](docs/ARCHITECTURE.md).
+- **IANA & System Reserved Directory**: Catalogs well-known privileged ports (0–1023) and high-profile registered ports (Docker, K8s, Redis, Postgres, MySQL) with real-time host availability.
+- **Deep Single-Port Inspector**: Click any port to inspect process owners, binding verdicts, CVE attack surfaces, and suggested alternative ports.
+- **9 Ergonomic Themes**: 3 Light, 3 Dark, and 3 Light-Dark Hybrid palettes with zero-reload switching and localStorage persistence. See [**Theme Catalog**](docs/THEMES.md).
+- **Trunk-Based Development**: Main-branch development with automated Google `release-please` semantic releases. See [**Trunk-Based Workflow**](docs/TRUNK_BASED.md).
+
+---
+
+## 🎨 9 Visual Themes
+
+Switch instantly via the dashboard header:
+
+| Category | Theme Name | Accent | Ideal Environment |
+| :--- | :--- | :--- | :--- |
+| **Light** | **Arctic Snow** | `#2563eb` Cobalt | Daylight office & high-contrast monitors |
+| **Light** | **Paper Sand** | `#b45309` Terracotta | Editorial sepia parchment for long reading |
+| **Light** | **Pastel Mint** | `#059669` Emerald | Soft botanical sage daylight |
+| **Dark** | **Midnight Obsidian** | `#38bdf8` Cyan | Deep OLED pitch-black void with neon telemetry |
+| **Dark** | **Cyber Synthwave** | `#ec4899` Magenta | Retro-futuristic dark violet |
+| **Dark** | **Charcoal Slate** | `#94a3b8` Steel | Low-glare matte graphite for dark rooms |
+| **Hybrid** | **Solar Eclipse** | `#0f172a` Slate | Dark control header with crisp daylight canvas |
+| **Hybrid** | **Nordic Twilight** | `#88c0d0` Frost | Balanced Scandinavian blue-gray twilight |
+| **Hybrid** | **OLED Mono Duo** | `#ffffff` White | Stark architectural monochrome high-contrast |
+
+---
+
+## 📚 Documentation Index
+
+To keep this README concise, detailed guides are organized into dedicated documentation files:
+
+- 🔒 [**docs/SECURITY.md**](docs/SECURITY.md) — Security boundary, danger matrix & reverse proxy isolation.
+- 🔌 [**docs/PORT_BINDING.md**](docs/PORT_BINDING.md) — Linux `CAP_NET_BIND_SERVICE`, sysctl, systemd daemon, & Docker setup.
+- 🎨 [**docs/THEMES.md**](docs/THEMES.md) — Detailed specifications, color tokens, and CSS variable architecture.
+- 🧠 [**docs/PHILOSOPHY.md**](docs/PHILOSOPHY.md) — Deployment principles, operational practices, and engineering philosophy.
+- 🏗️ [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) — Kernel procfs scanning internals, REST API, & file map.
+- 🚀 [**docs/TRUNK_BASED.md**](docs/TRUNK_BASED.md) — Trunk-based branching model & Release-Please conventional commits.
+
+---
+
+## 🛠️ Developer Commands
 
 ```bash
 # Start frontend Vite development server (port 3000 with API proxy)
 bun run dev
 
-# Run Biome formatting and linting check
+# Run Biome linting and formatting verification
 bun run check
 
 # Auto-format codebase with Biome
 bun run format
 
-# Compile production Vite assets and Rust backend
-bun run deploy
-
-# Verify Rust backend logic
+# Run Rust backend checks
 cargo check
+
+# Compile production Vite assets and Rust binary
+bun run deploy
 ```
 
 ---
 
-## 📁 Modular Architecture (~200 Lines Per File)
+## 📁 Modular Layout (~200 Lines Per File)
 
-Every source file begins with an explicit comment explaining its role and stays around ~200 lines for maximum maintainability:
+Every source file begins with an explicit comment explaining its role and stays around ~200 lines for cognitive clarity:
 
 ```
 port-inventory/
 ├── src/
-│   ├── main.rs                 # Port 80 binding supervisor & shutdown hooks (~170 lines)
+│   ├── main.rs                 # Port 80 supervisor & shutdown hooks (~170 lines)
 │   ├── server.rs               # Axum REST controllers & SPA asset router (~198 lines)
 │   ├── scanner.rs              # Linux /proc/net passive socket inspector (~232 lines)
 │   ├── reserved_db.rs          # IANA system & registered port registry (~176 lines)
@@ -179,13 +139,14 @@ port-inventory/
 │   └── styles/
 │       ├── themes.css          # CSS design tokens for 9 visual palettes (~242 lines)
 │       └── globals.css         # Modern responsive reset & table styling (~262 lines)
+├── docs/                       # Modular technical documentation guides
 ├── biome.json                  # Biome 2.6.4 formatter and linter config
-├── vite.config.ts              # Vite bundling config
-└── Cargo.toml                  # Rust dependencies (Axum, Tokio, Tower-Http)
+├── Cargo.toml                  # Rust dependencies
+└── LICENSE                     # MIT License
 ```
 
 ---
 
-## 📄 License & Disclaimer
+## 📄 License
 
-Provided for personal diagnostic use. The authors and contributors assume no liability for unintended network exposures or configurations. Always protect your network perimeter.
+Distributed under the [MIT License](LICENSE).

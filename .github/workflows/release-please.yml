@@ -1,0 +1,60 @@
+name: Release Please (Trunk-Based)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Release Please Action
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Checkout Code
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        if: ${{ steps.release.outputs.release_created }}
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Bun Environment
+        if: ${{ steps.release.outputs.release_created }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build Web Frontend Assets
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      - name: Build Native Rust Release Binary
+        if: ${{ steps.release.outputs.release_created }}
+        run: cargo build --release --locked
+
+      - name: Package Binary Artifact
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          mkdir -p release-pkg
+          cp target/release/port-inventory release-pkg/
+          cp -r dist release-pkg/
+          tar -czvf port-inventory-linux-x86_64.tar.gz -C release-pkg .
+
+      - name: Upload Binary to GitHub Release
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ steps.release.outputs.tag_name }} port-inventory-linux-x86_64.tar.gz
