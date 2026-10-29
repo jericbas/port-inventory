@@ -14,10 +14,10 @@
 // ============================================================================
 
 mod models;
-mod philosophy;
 mod reserved_db;
 mod scanner;
 mod server;
+mod telemetry;
 
 use std::env;
 use std::net::SocketAddr;
@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Launch the asynchronous Axum server with graceful shutdown hook
     info!("🌐 Port Inventory is actively serving on: http://{}:{}", requested_host, actual_port);
-    info!("📡 REST Endpoints: /api/status, /api/active-ports, /api/reserved-ports, /api/philosophy");
+    info!("📡 REST Endpoints: /api/status, /api/active-ports, /api/reserved-ports");
 
     let server_handle = axum::serve(listener, app).with_graceful_shutdown(shutdown_signal());
 

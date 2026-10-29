@@ -6,11 +6,11 @@
 // This file defines the TypeScript type definitions mirroring the Rust backend
 // models. It provides strong type safety across the React application for:
 //   - Active network socket entries (port, protocol, PID, process name, state).
+//   - Specific application running and specific file attribution per port.
 //   - IANA and standard system reserved ports database records.
 //   - System statistics and telemetry (uptime, host, port binding, disclaimer).
 //   - Port inspection results and suggested alternative unreserved ports.
 //   - The 9 visual theme definitions (3 light, 3 dark, 3 light-dark).
-//   - Deployment principles, practices, and engineering philosophy structures.
 // ============================================================================
 
 /** Supported transport layer protocols */
@@ -53,6 +53,10 @@ export interface ActivePort {
   state: SocketState;
   pid: number | null;
   process_name: string;
+  app_name: string;
+  file_path: string | null;
+  exe_path: string | null;
+  cwd: string | null;
   cmdline: string | null;
   service_name: string;
   description: string;
@@ -91,15 +95,6 @@ export interface PortDetail {
   is_system_reserved: boolean;
   bind_verdict: string;
   suggested_alternatives: number[];
-}
-
-/** Deployment principles and philosophy section */
-export interface PhilosophySection {
-  id: string;
-  title: string;
-  summary: string;
-  details: string[];
-  recommendations: string[];
 }
 
 /**
@@ -150,7 +145,7 @@ export interface ThemeMetadata {
 export type u16Number = number;
 
 /** Active tab views available in the user interface */
-export type ActiveTab = "active-ports" | "reserved-ports" | "philosophy";
+export type ActiveTab = "active-ports" | "reserved-ports";
 
 /** Filter options for sorting and searching port records */
 export interface PortFilterOptions {

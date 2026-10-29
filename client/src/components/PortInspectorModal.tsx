@@ -12,7 +12,17 @@
 //   - Suggested clean alternative unreserved ports if this one is blocked.
 // ============================================================================
 
-import { AlertCircle, CheckCircle, Copy, Server, Shield, X } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  CheckCircle,
+  Copy,
+  FileCode,
+  Folder,
+  Server,
+  Shield,
+  X,
+} from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { PortDetail } from "../types";
@@ -31,6 +41,7 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
   const [detail, setDetail] = useState<PortDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedPath, setCopiedPath] = useState<string | null>(null);
 
   useEffect(() => {
     if (!port) return;
@@ -181,7 +192,7 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
             {/* Active Host Processes */}
             <div>
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-main)" }}>
-                Active Host Processes ({detail.active_bindings.length})
+                Active Host Processes &amp; File Attribution ({detail.active_bindings.length})
               </span>
               {detail.active_bindings.length === 0 ? (
                 <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "4px" }}>
@@ -192,7 +203,7 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "0.5rem",
+                    gap: "0.75rem",
                     marginTop: "0.5rem",
                   }}
                 >
@@ -202,36 +213,165 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
                       style={{
                         background: "var(--bg-card)",
                         border: "1px solid var(--border-subtle)",
-                        padding: "0.6rem 0.75rem",
-                        borderRadius: "6px",
+                        padding: "0.75rem 0.85rem",
+                        borderRadius: "8px",
                         fontSize: "0.8rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.4rem",
                       }}
                     >
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <strong>{b.process_name}</strong>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                          <strong style={{ fontSize: "0.9rem", color: "var(--accent-primary)" }}>
+                            {b.app_name}
+                          </strong>
+                          {b.process_name !== b.app_name && (
+                            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                              ({b.process_name})
+                            </span>
+                          )}
+                        </div>
                         <span className="badge badge-listen">{b.state}</span>
                       </div>
+
                       <div
                         style={{
                           color: "var(--text-muted)",
                           fontSize: "0.75rem",
-                          marginTop: "2px",
                         }}
                       >
-                        PID: {b.pid ? b.pid : "Kernel / Foreign"} | Address: {b.address}
+                        PID: {b.pid ? b.pid : "Kernel / Foreign"} | Protocol: {b.protocol} | Bound:{" "}
+                        {b.address}:{b.port}
                       </div>
-                      {b.cmdline && (
-                        <code
+
+                      {/* Specific File Running */}
+                      {b.file_path && (
+                        <div
                           style={{
-                            display: "block",
-                            marginTop: "4px",
-                            fontSize: "0.725rem",
-                            color: "var(--text-muted)",
-                            wordBreak: "break-all",
+                            background: "var(--bg-surface)",
+                            padding: "0.45rem 0.6rem",
+                            borderRadius: "6px",
+                            border: "1px solid var(--border-subtle)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: "0.5rem",
                           }}
                         >
-                          {b.cmdline}
-                        </code>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.4rem",
+                              minWidth: 0,
+                            }}
+                          >
+                            <FileCode
+                              size={14}
+                              color="var(--accent-primary)"
+                              style={{ flexShrink: 0 }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                              <span
+                                style={{
+                                  fontSize: "0.7rem",
+                                  color: "var(--text-muted)",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                RUNNING FILE / ENTRYPOINT
+                              </span>
+                              <code
+                                style={{
+                                  fontSize: "0.75rem",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                                title={b.file_path}
+                              >
+                                {b.file_path}
+                              </code>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            title="Copy file path"
+                            onClick={() => {
+                              if (b.file_path) {
+                                navigator.clipboard.writeText(b.file_path);
+                                setCopiedPath(b.file_path);
+                                setTimeout(() => setCopiedPath(null), 2000);
+                              }
+                            }}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              cursor: "pointer",
+                              padding: "4px",
+                              color:
+                                copiedPath === b.file_path
+                                  ? "var(--color-listening)"
+                                  : "var(--text-muted)",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {copiedPath === b.file_path ? <Check size={13} /> : <Copy size={13} />}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Working Directory (CWD) */}
+                      {b.cwd && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.35rem",
+                            fontSize: "0.725rem",
+                            color: "var(--text-muted)",
+                          }}
+                        >
+                          <Folder size={12} />
+                          <span>CWD: {b.cwd}</span>
+                        </div>
+                      )}
+
+                      {/* Command Line */}
+                      {b.cmdline && (
+                        <div style={{ marginTop: "2px" }}>
+                          <span
+                            style={{
+                              fontSize: "0.68rem",
+                              color: "var(--text-muted)",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Invocation
+                          </span>
+                          <code
+                            style={{
+                              display: "block",
+                              marginTop: "2px",
+                              padding: "0.35rem 0.5rem",
+                              borderRadius: "4px",
+                              background: "var(--bg-surface)",
+                              fontSize: "0.72rem",
+                              color: "var(--text-main)",
+                              wordBreak: "break-all",
+                            }}
+                          >
+                            {b.cmdline}
+                          </code>
+                        </div>
                       )}
                     </div>
                   ))}

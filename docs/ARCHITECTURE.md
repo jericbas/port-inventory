@@ -48,9 +48,12 @@ Unlike traditional network scanners (e.g. Nmap) that inject network packets into
    - The scanner iterates over `/proc/[pid]/fd/*` symlinks matching `socket:[<inode>]`.
    - When an inode matches, the scanner associates the owning **Process ID (PID)**.
 
-3. **Process Metadata Extraction**:
-   - `/proc/[pid]/comm`: Reads the short executable name (e.g. `nginx`, `docker`).
-   - `/proc/[pid]/cmdline`: Reads the full command line arguments invoked.
+3. **Process Metadata & File Attribution**:
+   - `/proc/[pid]/comm`: Reads executable / daemon name.
+   - `/proc/[pid]/cmdline`: Parses command line arguments, runtime scripts, and configuration paths.
+   - `/proc/[pid]/exe`: Reads symlink to binary executable on disk.
+   - `/proc/[pid]/cwd`: Resolves working directory and detects project entrypoints (e.g. `server.js`, `package.json`).
+   - Command-line port extraction (e.g. `docker-proxy -host-port <p> -container-port <cp>`).
 
 4. **Service Correlation**:
    - Cross-references the detected port against the built-in IANA standard database (`src/reserved_db.rs`) to report whether the service is expected or rogue.
@@ -62,36 +65,34 @@ Unlike traditional network scanners (e.g. Nmap) that inject network packets into
 | Route | Method | Description | Response Type |
 | :--- | :--- | :--- | :--- |
 | `/api/status` | `GET` | Hostname, kernel release, uptime, listening count, bound port | `SystemStats` |
-| `/api/active-ports` | `GET` | All live active listening sockets and owning processes | `Vec<ActivePort>` |
+| `/api/active-ports` | `GET` | All live active listening sockets, app names, file paths, and PIDs | `Vec<ActivePort>` |
 | `/api/reserved-ports` | `GET` | IANA catalog with host availability indicators | `Vec<ReservedPort>` |
 | `/api/inspect/:port` | `GET` | Single port deep-dive, active bindings, alternative ports | `PortDetail` |
-| `/api/philosophy` | `GET` | Structured deployment principles & operational guidelines | `Vec<PhilosophySection>` |
 
 ---
 
-## 5. Modular Codebase Layout (~200 Lines Per File)
+## 5. Modular Codebase Layout
 
-To maintain exceptional code quality and prevent monolithic sprawl, every source file is capped around **~200 lines** and begins with a self-documenting explanation header:
+To maintain exceptional code quality and prevent monolithic sprawl, every source file begins with a self-documenting explanation header:
 
 ```
 port-inventory/
 ├── src/
 │   ├── main.rs                 # Port 80 supervisor & shutdown hooks (~170 lines)
-│   ├── server.rs               # Axum REST controllers & SPA asset router (~198 lines)
-│   ├── scanner.rs              # Linux /proc/net passive socket inspector (~232 lines)
+│   ├── server.rs               # Axum REST controllers & SPA asset router (~190 lines)
+│   ├── scanner.rs              # Linux procfs passive socket & file attribution (~560 lines)
 │   ├── reserved_db.rs          # IANA system & registered port registry (~176 lines)
-│   ├── philosophy.rs           # Deployment principles & operational guidelines (~178 lines)
-│   └── models.rs               # Strongly-typed data structs and enums (~221 lines)
+│   ├── telemetry.rs            # Host telemetry & diagnostic metrics (~50 lines)
+│   └── models.rs               # Strongly-typed data structs and enums (~210 lines)
 ├── client/src/
 │   ├── main.tsx                # React mount point & global error boundary (~153 lines)
-│   ├── App.tsx                 # Main dashboard shell & telemetry polling (~227 lines)
-│   ├── types.ts                # TypeScript domain contracts & utilities (~199 lines)
+│   ├── App.tsx                 # Main dashboard shell & telemetry polling (~215 lines)
+│   ├── types.ts                # TypeScript domain contracts & utilities (~185 lines)
 │   ├── context/ThemeContext.tsx# 9-theme state manager & localStorage sync (~195 lines)
 │   ├── components/
-│   │   ├── ActivePortsTable.tsx    # Live listening socket table & search (~233 lines)
+│   │   ├── ActivePortsTable.tsx    # Live listening socket, app & file table (~380 lines)
 │   │   ├── ReservedPortsList.tsx   # IANA catalog & availability filter (~262 lines)
-│   │   ├── PortInspectorModal.tsx  # Deep single-port diagnostic dialog (~246 lines)
-│   │   ├── PhilosophyView.tsx      # Interactive principles & practices tab (~215 lines)
+│   │   ├── PortInspectorModal.tsx  # Deep single-port diagnostic & file details (~360 lines)
 │   │   ├── ThemeSelector.tsx       # Swatch picker for all 9 palettes (~239 lines)
 │   │   └── WarningBanner.tsx       # Security disclaimer & capabilities note (~214 lines)
 │   └── styles/

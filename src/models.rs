@@ -8,7 +8,7 @@
 // 1. Active network sockets detected on the host operating system.
 // 2. IANA well-known and system reserved port definitions.
 // 3. System telemetry (CPU, memory, uptime, host details).
-// 4. Deployment philosophy and security declaration models.
+// 4. Detailed process, application, and file attribution per port.
 //
 // Every struct derives serde Serialize/Deserialize for seamless JSON transmission
 // to the Vite/React frontend client.
@@ -111,6 +111,14 @@ pub struct ActivePort {
     pub pid: Option<u32>,
     /// Executable name of the owning process (e.g., nginx, docker, node)
     pub process_name: String,
+    /// Specific human-readable application name (e.g., OmniRoute, Ollama, Docker Proxy)
+    pub app_name: String,
+    /// Specific file path running this service (script, config file, or binary)
+    pub file_path: Option<String>,
+    /// Binary executable path (/proc/[pid]/exe)
+    pub exe_path: Option<String>,
+    /// Working directory of the owning process (/proc/[pid]/cwd)
+    pub cwd: Option<String>,
     /// Complete command line arguments used to invoke the process
     pub cmdline: Option<String>,
     /// Well-known service name matching this port if recognized
@@ -180,20 +188,6 @@ pub struct PortDetail {
     pub suggested_alternatives: Vec<u16>,
 }
 
-/// Structural unit for deployment principles and engineering philosophy.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PhilosophySection {
-    /// Unique identifier for navigation anchoring
-    pub id: String,
-    /// Section title
-    pub title: String,
-    /// Core principle / takeaway sentence
-    pub summary: String,
-    /// Detailed breakdown of engineering practices
-    pub details: Vec<String>,
-    /// Actionable guidelines for operators
-    pub recommendations: Vec<String>,
-}
 
 /// Runtime configuration options for the server backend.
 #[allow(dead_code)]
