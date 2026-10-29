@@ -1,6 +1,6 @@
 {
   "name": "port-inventory",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "High-performance port catalog and live system socket monitor built with Rust, Bun, Vite, React, TypeScript, and Biome",
