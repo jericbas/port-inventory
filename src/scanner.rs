@@ -128,6 +128,7 @@ pub fn scan_active_ports() -> Vec<ActivePort> {
                 service_name,
                 description,
                 inode: raw.inode,
+                custom_name: None,
             }
         })
         .collect();

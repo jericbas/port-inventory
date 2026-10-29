@@ -127,6 +127,9 @@ pub struct ActivePort {
     pub description: String,
     /// Inode identifier within the Linux kernel socket table
     pub inode: u64,
+    /// User-assigned custom human-readable nickname or alias (e.g., 'Staging API')
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_name: Option<String>,
 }
 
 /// Represents a standard IANA or system-reserved port specification.
@@ -150,6 +153,9 @@ pub struct ReservedPort {
     pub security_note: String,
     /// Official RFC or standard document reference
     pub rfc_reference: Option<String>,
+    /// User-assigned custom human-readable nickname or alias
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_name: Option<String>,
 }
 
 /// System diagnostics and host telemetry summary.
@@ -186,6 +192,15 @@ pub struct PortDetail {
     pub bind_verdict: String,
     /// Recommended alternative ports if this one is occupied or reserved
     pub suggested_alternatives: Vec<u16>,
+    /// User-assigned custom human-readable nickname or alias
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_name: Option<String>,
+}
+
+/// Request payload to assign or update a custom name/alias for a port.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CustomNamePayload {
+    pub name: String,
 }
 
 

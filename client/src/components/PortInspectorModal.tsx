@@ -19,12 +19,16 @@ import {
   Copy,
   FileCode,
   Folder,
+  Pencil,
   Server,
   Shield,
+  Tag,
+  Trash2,
   X,
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useCustomNames } from "../hooks/useCustomNames";
 import type { PortDetail } from "../types";
 
 interface PortInspectorModalProps {
@@ -38,10 +42,16 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
   onClose,
   onSelectAlternative,
 }) => {
+  const { customNames, setPortName, removePortName } = useCustomNames();
   const [detail, setDetail] = useState<PortDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [aliasInput, setAliasInput] = useState("");
+
+  const currentCustomName = port ? customNames[port] || detail?.custom_name : undefined;
 
   useEffect(() => {
     if (!port) return;
@@ -106,6 +116,149 @@ export const PortInspectorModal: React.FC<PortInspectorModalProps> = ({
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
+            {/* Custom Name / Alias Section */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                background: "var(--bg-card)",
+                border: "1px solid var(--border-subtle)",
+                padding: "0.6rem 0.85rem",
+                borderRadius: "8px",
+                fontSize: "0.825rem",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Tag size={15} color="var(--accent-primary)" />
+                <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>
+                  Custom Name / Alias:
+                </span>
+                {isEditingName ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                    <input
+                      // biome-ignore lint/a11y/noAutofocus: user initiated edit action
+                      autoFocus
+                      type="text"
+                      value={aliasInput}
+                      placeholder="e.g. My Service Name"
+                      onChange={(e) => setAliasInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          setPortName(port, aliasInput);
+                          setIsEditingName(false);
+                        } else if (e.key === "Escape") {
+                          setIsEditingName(false);
+                        }
+                      }}
+                      style={{
+                        padding: "0.2rem 0.45rem",
+                        fontSize: "0.8rem",
+                        borderRadius: "4px",
+                        border: "1px solid var(--accent-primary)",
+                        background: "var(--bg-surface)",
+                        color: "var(--text-main)",
+                        outline: "none",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPortName(port, aliasInput);
+                        setIsEditingName(false);
+                      }}
+                      style={{
+                        background: "var(--color-listening-bg)",
+                        border: "1px solid var(--color-listening)",
+                        color: "var(--color-listening)",
+                        borderRadius: "4px",
+                        padding: "2px 5px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Check size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingName(false)}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--text-muted)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                ) : currentCustomName ? (
+                  <span
+                    style={{
+                      fontWeight: 700,
+                      color: "var(--accent-primary)",
+                      background: "rgba(59, 130, 246, 0.12)",
+                      padding: "0.15rem 0.5rem",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    {currentCustomName}
+                  </span>
+                ) : (
+                  <span style={{ color: "var(--text-faint)", fontStyle: "italic" }}>
+                    No custom alias set
+                  </span>
+                )}
+              </div>
+
+              {!isEditingName && (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAliasInput(currentCustomName || "");
+                      setIsEditingName(true);
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid var(--border-subtle)",
+                      color: "var(--text-main)",
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "5px",
+                      fontSize: "0.75rem",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                    }}
+                  >
+                    <Pencil size={11} />
+                    <span>{currentCustomName ? "Edit" : "Set Name"}</span>
+                  </button>
+
+                  {currentCustomName && (
+                    <button
+                      type="button"
+                      onClick={() => removePortName(port)}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--color-danger)",
+                        cursor: "pointer",
+                        padding: "3px",
+                      }}
+                      title="Remove alias"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Operational Verdict Banner */}
             <div
               style={{
