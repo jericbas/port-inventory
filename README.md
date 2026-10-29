@@ -92,7 +92,6 @@ To keep this README concise, detailed guides are organized into dedicated docume
 - 🔒 [**docs/SECURITY.md**](docs/SECURITY.md) — Security boundary, danger matrix & reverse proxy isolation.
 - 🔌 [**docs/PORT_BINDING.md**](docs/PORT_BINDING.md) — Linux `CAP_NET_BIND_SERVICE`, sysctl, systemd daemon, & Docker setup.
 - 🎨 [**docs/THEMES.md**](docs/THEMES.md) — Detailed specifications, color tokens, and CSS variable architecture.
-- 🧠 [**docs/PHILOSOPHY.md**](docs/PHILOSOPHY.md) — Deployment principles, operational practices, and engineering philosophy.
 - 🏗️ [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) — Kernel procfs scanning internals, REST API, & file map.
 - 🚀 [**docs/TRUNK_BASED.md**](docs/TRUNK_BASED.md) — Trunk-based branching model & Release-Please conventional commits.
 
@@ -133,21 +132,20 @@ Every source file begins with an explicit comment explaining its role and stays 
 port-inventory/
 ├── src/
 │   ├── main.rs                 # Port 80 supervisor & shutdown hooks (~170 lines)
-│   ├── server.rs               # Axum REST controllers & SPA asset router (~198 lines)
-│   ├── scanner.rs              # Linux /proc/net passive socket inspector (~232 lines)
+│   ├── server.rs               # Axum REST controllers & SPA asset router (~190 lines)
+│   ├── scanner.rs              # Linux procfs passive socket & file attribution (~560 lines)
 │   ├── reserved_db.rs          # IANA system & registered port registry (~176 lines)
-│   ├── philosophy.rs           # Deployment principles & operational guidelines (~178 lines)
-│   └── models.rs               # Strongly-typed data structs and enums (~221 lines)
+│   ├── telemetry.rs            # Host telemetry & diagnostic metrics (~50 lines)
+│   └── models.rs               # Strongly-typed data structs and enums (~210 lines)
 ├── client/src/
 │   ├── main.tsx                # React mount point & global error boundary (~153 lines)
-│   ├── App.tsx                 # Main dashboard shell & telemetry polling (~227 lines)
-│   ├── types.ts                # TypeScript domain contracts & utilities (~199 lines)
+│   ├── App.tsx                 # Main dashboard shell & telemetry polling (~215 lines)
+│   ├── types.ts                # TypeScript domain contracts & utilities (~185 lines)
 │   ├── context/ThemeContext.tsx# 9-theme state manager & localStorage sync (~195 lines)
 │   ├── components/
-│   │   ├── ActivePortsTable.tsx    # Live listening socket table & search (~233 lines)
+│   │   ├── ActivePortsTable.tsx    # Live listening socket, app & file table (~380 lines)
 │   │   ├── ReservedPortsList.tsx   # IANA catalog & availability filter (~262 lines)
-│   │   ├── PortInspectorModal.tsx  # Deep single-port diagnostic dialog (~246 lines)
-│   │   ├── PhilosophyView.tsx      # Interactive principles & practices tab (~215 lines)
+│   │   ├── PortInspectorModal.tsx  # Deep single-port diagnostic & file details (~360 lines)
 │   │   ├── ThemeSelector.tsx       # Swatch picker for all 9 palettes (~239 lines)
 │   │   └── WarningBanner.tsx       # Security disclaimer & capabilities note (~214 lines)
 │   └── styles/

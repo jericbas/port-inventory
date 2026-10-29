@@ -8,16 +8,15 @@
 //   1. System stats polling (hostname, OS info, uptime, bound port).
 //   2. Active listening sockets & process discovery API calls.
 //   3. Reserved and unavailable port directory state.
-//   4. Tab navigation between "Active Sockets", "Reserved Ports", and "Philosophy".
+//   4. Tab navigation between "Active Sockets" and "Reserved Ports".
 //   5. Prominent display of the Personal Use Warning Banner.
 //   6. 9-theme picker and single-port deep inspector dialog.
 // ============================================================================
 
-import { Activity, Clock, Compass, Globe, Radio, Server, Wifi } from "lucide-react";
+import { Activity, Clock, Globe, Radio, Server, Wifi } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { ActivePortsTable } from "./components/ActivePortsTable";
-import { PhilosophyView } from "./components/PhilosophyView";
 import { PortInspectorModal } from "./components/PortInspectorModal";
 import { ReservedPortsList } from "./components/ReservedPortsList";
 import { ThemeSelector } from "./components/ThemeSelector";
@@ -185,15 +184,6 @@ export const App: React.FC = () => {
           <Server size={16} />
           <span>Reserved &amp; Unavailable Ports ({reservedPorts.length})</span>
         </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("philosophy")}
-          className={`tab-btn ${activeTab === "philosophy" ? "active" : ""}`}
-        >
-          <Compass size={16} />
-          <span>Deployment Principles &amp; Philosophy</span>
-        </button>
       </nav>
 
       {/* Tab Panels */}
@@ -210,8 +200,6 @@ export const App: React.FC = () => {
         {activeTab === "reserved-ports" && (
           <ReservedPortsList ports={reservedPorts} onSelectPort={(port) => setSelectedPort(port)} />
         )}
-
-        {activeTab === "philosophy" && <PhilosophyView />}
       </main>
 
       {/* Single Port Deep Inspection Modal */}

@@ -9,7 +9,6 @@
 //   - GET /api/active-ports: Real-time scan of local sockets, processes, and PIDs.
 //   - GET /api/reserved-ports: Catalog of IANA and system reserved ports.
 //   - GET /api/inspect/:port: Deep-dive inspection into a specific port number.
-//   - GET /api/philosophy: Deployment principles, operational practices, and ethics.
 //
 // It also provides SPA fallback routing, serving the Vite-compiled React
 // frontend located in ./dist.
@@ -28,15 +27,13 @@ use axum::{
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
-use crate::models::{
-    ActivePort, PhilosophySection, PortAvailability, PortDetail, ReservedPort, SystemStats,
-};
-use crate::philosophy::{get_philosophy_document, get_system_stats};
+use crate::models::{ActivePort, PortAvailability, PortDetail, ReservedPort, SystemStats};
 use crate::reserved_db::{
     find_reserved_port, get_all_reserved_ports, is_privileged_port,
     suggest_alternative_ports,
 };
 use crate::scanner::scan_active_ports;
+use crate::telemetry::get_system_stats;
 
 /// Global shared state passed into Axum handlers.
 #[derive(Clone)]
@@ -62,7 +59,6 @@ pub fn create_router(bound_port: u16, static_dir: String) -> Router {
         .route("/api/active-ports", get(handle_get_active_ports))
         .route("/api/reserved-ports", get(handle_get_reserved_ports))
         .route("/api/inspect/{port}", get(handle_inspect_port))
-        .route("/api/philosophy", get(handle_get_philosophy))
         .fallback(handle_static_or_spa)
         .layer(cors)
         .layer(TraceLayer::new_for_http())
@@ -151,10 +147,6 @@ async fn handle_inspect_port(
     }))
 }
 
-/// Handler for GET /api/philosophy - Deployment principles and guidelines.
-async fn handle_get_philosophy() -> Json<Vec<PhilosophySection>> {
-    Json(get_philosophy_document())
-}
 
 /// SPA and Static asset fallback handler.
 /// Attempts to serve static files from the dist/ directory; falls back to index.html.
