@@ -46,6 +46,13 @@ Open **`http://localhost`** in your browser.
 
 *(If launched without capabilities, it automatically falls back gracefully to unprivileged Port `8080` / `8000`.)*
 
+### 4. Or Run with Docker (Headless / Containerized)
+```bash
+# Build and run with host network & PID visibility in background
+docker compose up -d
+```
+See [**Docker & Headless Deployment Guide**](docs/DOCKER_AND_HEADLESS.md) for headless daemon setups (`systemd`, CLI API querying, bridge mode).
+
 ---
 
 ## 🚀 Key Capabilities
@@ -81,6 +88,7 @@ Switch instantly via the dashboard header:
 
 To keep this README concise, detailed guides are organized into dedicated documentation files:
 
+- 🐳 [**docs/DOCKER_AND_HEADLESS.md**](docs/DOCKER_AND_HEADLESS.md) — Docker containerization, systemd headless daemon, CLI API usage, & host namespaces.
 - 🔒 [**docs/SECURITY.md**](docs/SECURITY.md) — Security boundary, danger matrix & reverse proxy isolation.
 - 🔌 [**docs/PORT_BINDING.md**](docs/PORT_BINDING.md) — Linux `CAP_NET_BIND_SERVICE`, sysctl, systemd daemon, & Docker setup.
 - 🎨 [**docs/THEMES.md**](docs/THEMES.md) — Detailed specifications, color tokens, and CSS variable architecture.
@@ -107,6 +115,12 @@ cargo check
 
 # Compile production Vite assets and Rust binary
 bun run deploy
+
+# Build and run Docker container with host network visibility
+docker compose up -d --build
+
+# View container logs
+docker compose logs -f
 ```
 
 ---

@@ -1,0 +1,33 @@
+# ============================================================================
+# Docker Compose for Port Inventory
+#
+# NOTE: Host Network & Host PID Namespaces
+# Port Inventory inspects Linux kernel procfs (/proc/net/tcp, /proc/[pid]/fd)
+# to discover live host sockets, listening ports, and owning processes.
+#
+# For full host inspection, `network_mode: "host"` and `pid: "host"` are required.
+# ============================================================================
+
+services:
+  port-inventory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: port-inventory:latest
+    container_name: port-inventory
+    restart: unless-stopped
+    # Attach directly to host network and PID namespaces for complete socket monitoring
+    network_mode: "host"
+    pid: "host"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=80
+      - STATIC_DIR=/app/dist
+      - RUST_LOG=info
+    # Note: When network_mode is "host", standard port mappings (ports:) are omitted
+    # because the container binds directly to host interfaces.
+    #
+    # If running in isolated Bridge network mode (inspects container network only):
+    # network_mode: "bridge"
+    # ports:
+    #   - "80:80"
