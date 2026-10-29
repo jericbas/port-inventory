@@ -58,6 +58,8 @@ See [**Docker & Headless Deployment Guide**](docs/DOCKER_AND_HEADLESS.md) for he
 ## 🚀 Key Capabilities
 
 - **Port 80 Native & Capability Supervisor**: Default target is Port 80 with automatic fallback if permissions are restricted. See [**Port 80 Binding Guide**](docs/PORT_BINDING.md).
+- **Custom Port Naming & Aliases**: Name and label any port directly in the table or inspector modal (e.g. "Staging API", "Main Postgres DB"). Persisted across browser sessions with zero-latency local caching and server synchronization.
+- **Table Header Column Filters & Sorting**: Direct column-level filtering for Port, Name/Alias, Application, File Path, Process/PID, Address, and State, plus multi-column sorting.
 - **Passive Kernel Procfs Inspection**: Reads directly from `/proc/net/tcp`, `/proc/net/udp`, and `/proc/[pid]/fd` symlinks. Zero synthetic network packets are transmitted. See [**Architecture Guide**](docs/ARCHITECTURE.md).
 - **IANA & System Reserved Directory**: Catalogs well-known privileged ports (0–1023) and high-profile registered ports (Docker, K8s, Redis, Postgres, MySQL) with real-time host availability.
 - **Deep Single-Port Inspector**: Click any port to inspect process owners, binding verdicts, CVE attack surfaces, and suggested alternative ports.
@@ -141,6 +143,8 @@ port-inventory/
 │   ├── main.tsx                # React mount point & global error boundary (~153 lines)
 │   ├── App.tsx                 # Main dashboard shell & telemetry polling (~215 lines)
 │   ├── types.ts                # TypeScript domain contracts & utilities (~185 lines)
+│   ├── hooks/
+│   │   └── useCustomNames.ts   # Custom port aliases & offline sync hook (~140 lines)
 │   ├── context/ThemeContext.tsx# 9-theme state manager & localStorage sync (~195 lines)
 │   ├── components/
 │   │   ├── ActivePortsTable.tsx    # Live listening socket, app & file table (~380 lines)

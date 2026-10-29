@@ -68,6 +68,9 @@ Unlike traditional network scanners (e.g. Nmap) that inject network packets into
 | `/api/active-ports` | `GET` | All live active listening sockets, app names, file paths, and PIDs | `Vec<ActivePort>` |
 | `/api/reserved-ports` | `GET` | IANA catalog with host availability indicators | `Vec<ReservedPort>` |
 | `/api/inspect/:port` | `GET` | Single port deep-dive, active bindings, alternative ports | `PortDetail` |
+| `/api/custom-names` | `GET` | User-defined port custom names / aliases map | `HashMap<u16, String>` |
+| `/api/custom-names/:port` | `PUT` | Assign or update custom alias for a port | `StatusCode 200` |
+| `/api/custom-names/:port` | `DELETE` | Delete custom alias for a port | `StatusCode 200` |
 
 ---
 
@@ -88,6 +91,8 @@ port-inventory/
 │   ├── main.tsx                # React mount point & global error boundary (~153 lines)
 │   ├── App.tsx                 # Main dashboard shell & telemetry polling (~215 lines)
 │   ├── types.ts                # TypeScript domain contracts & utilities (~185 lines)
+│   ├── hooks/
+│   │   └── useCustomNames.ts   # Custom port aliases & offline sync hook (~140 lines)
 │   ├── context/ThemeContext.tsx# 9-theme state manager & localStorage sync (~195 lines)
 │   ├── components/
 │   │   ├── ActivePortsTable.tsx    # Live listening socket, app & file table (~380 lines)

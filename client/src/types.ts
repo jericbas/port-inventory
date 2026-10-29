@@ -61,6 +61,7 @@ export interface ActivePort {
   service_name: string;
   description: string;
   inode: number;
+  custom_name?: string;
 }
 
 /** An IANA standard or well-known system reserved port */
@@ -74,6 +75,7 @@ export interface ReservedPort {
   is_privileged: boolean;
   security_note: string;
   rfc_reference?: string;
+  custom_name?: string;
 }
 
 /** Host system telemetry and operational statistics */
@@ -95,6 +97,7 @@ export interface PortDetail {
   is_system_reserved: boolean;
   bind_verdict: string;
   suggested_alternatives: number[];
+  custom_name?: string;
 }
 
 /**
@@ -161,6 +164,27 @@ export const DEFAULT_FILTERS: PortFilterOptions = {
   category: "all",
   availability: "all",
   protocol: "all",
+};
+
+/** Column-level filters applied directly on table headers */
+export interface HeaderColumnFilters {
+  port: string;
+  customName: string;
+  appName: string;
+  filePath: string;
+  process: string;
+  address: string;
+  state: string;
+}
+
+export const DEFAULT_HEADER_FILTERS: HeaderColumnFilters = {
+  port: "",
+  customName: "",
+  appName: "",
+  filePath: "",
+  process: "",
+  address: "",
+  state: "ALL",
 };
 
 /** Helper to format uptime into human-readable hours and minutes */

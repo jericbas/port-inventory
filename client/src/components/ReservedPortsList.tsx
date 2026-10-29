@@ -14,9 +14,10 @@
 //   - Provides click-through access to inspect deep details for any port.
 // ============================================================================
 
-import { CheckCircle, ExternalLink, Lock, Search, ShieldAlert } from "lucide-react";
+import { CheckCircle, ExternalLink, Lock, Search, ShieldAlert, Tag } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
+import { useCustomNames } from "../hooks/useCustomNames";
 import type { PortCategory, ReservedPort } from "../types";
 
 interface ReservedPortsListProps {
@@ -25,6 +26,7 @@ interface ReservedPortsListProps {
 }
 
 export const ReservedPortsList: React.FC<ReservedPortsListProps> = ({ ports, onSelectPort }) => {
+  const { customNames } = useCustomNames();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -41,11 +43,14 @@ export const ReservedPortsList: React.FC<ReservedPortsListProps> = ({ ports, onS
   ];
 
   const filtered = ports.filter((item) => {
+    const customName = customNames[item.port] || item.custom_name || "";
+    const term = searchTerm.toLowerCase();
     const matchesSearch =
-      item.port.toString().includes(searchTerm) ||
-      item.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.security_note.toLowerCase().includes(searchTerm.toLowerCase());
+      item.port.toString().includes(term) ||
+      customName.toLowerCase().includes(term) ||
+      item.service_name.toLowerCase().includes(term) ||
+      item.description.toLowerCase().includes(term) ||
+      item.security_note.toLowerCase().includes(term);
 
     const matchesCat =
       selectedCategory === "all" || item.category === (selectedCategory as PortCategory);
@@ -191,9 +196,26 @@ export const ReservedPortsList: React.FC<ReservedPortsListProps> = ({ ports, onS
                     </span>
                   </td>
                   <td>
-                    <span style={{ fontWeight: 600, color: "var(--accent-primary)" }}>
-                      {item.service_name}
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <span style={{ fontWeight: 600, color: "var(--accent-primary)" }}>
+                        {item.service_name}
+                      </span>
+                      {(customNames[item.port] || item.custom_name) && (
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.2rem",
+                            fontSize: "0.72rem",
+                            color: "var(--accent-secondary)",
+                            fontWeight: 600,
+                          }}
+                        >
+                          <Tag size={10} />
+                          <span>{customNames[item.port] || item.custom_name}</span>
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     {isHostActive ? (

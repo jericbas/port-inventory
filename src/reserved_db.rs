@@ -118,6 +118,7 @@ fn entry(
         is_privileged,
         security_note: security_note.to_string(),
         rfc_reference: Some(rfc.to_string()),
+        custom_name: None,
     }
 }
 
